@@ -117,6 +117,50 @@ $EDITOR config.json
 | `--state-probe` | 对当前游戏子进程进行只读 Mono 诊断。 |
 | `--recovery-check` | 完成一次恢复检查后在大厅停止。 |
 
+## 给 Agent 的部署 Prompt
+
+如果希望让能访问目标 Linux 终端的 Agent 协助部署，可以复制下面的 Prompt。先把尖括号中的信息替换成实际值；没有 SSH 或终端权限的 Agent 只能给出命令，不能声称部署已经完成。
+
+```text
+你是我的 Linux 部署助手。请把下面这个项目部署到我授权的目标主机：
+
+项目：https://github.com/lyy26299/battlegrounds-linux-bot
+目标主机：<SSH 用户>@<主机地址>
+安装目录：<例如 /home/<用户>/battlegrounds-linux-bot>
+hearthstone-linux-gui 启动器：<绝对路径>
+Hearthstone.x86_64：<绝对路径>
+运行窗口：<例如每天 01:00–12:00，Asia/Shanghai>
+
+请严格按以下顺序执行，并在每一步报告实际输出和结论：
+
+1. 先检查系统：Linux、x86_64、Python 3.10–3.12、systemd user session、Xvfb、xauth、xdpyinfo、xprop、openbox、dbus-run-session、磁盘空间和可用内存。缺少条件时先说明，不要假装兼容。
+2. 如果安装目录已有文件，先检查 Git 状态和现有 config.json；不要覆盖用户改动、私有配置或运行数据。全新目录才执行 clone，已有仓库只在确认后更新。
+3. 按 README 安装系统依赖，使用支持版本的 Python 创建 .venv，并运行 bash setup.sh。不要使用 Python 3.13 或更高版本绕过版本检查。
+4. 如果 config.json 不存在，从 config.example.json 创建；写入上面提供的启动器、游戏可执行文件和 state_dir 路径。不要索要、记录或输出账号密码、验证码、令牌、SSH 私钥、Cookie 或启动器私有日志。
+5. 先人工完成官方启动器登录。遇到登录过期、验证码或二次验证时停止，把需要我手动完成的步骤告诉我。
+6. 生成 systemd 用户服务但暂时不要启用每日定时：
+   .venv/bin/python install_services.py --write
+   systemctl --user daemon-reload
+   systemctl --user start bg-desktop.service
+7. 使用 DISPLAY=:91 和 XAUTHORITY=$HOME/.local/state/battlegrounds-bot/Xauthority 运行 .venv/bin/python preflight.py。预检失败就停止并报告缺项。
+8. 先做只读观察，不允许点击：
+   env DISPLAY=:91 XAUTHORITY=$HOME/.local/state/battlegrounds-bot/Xauthority .venv/bin/python runner.py --config config.json --max-minutes 3
+   检查输出、阶段截图和最新 summary.json；确认窗口身份、分辨率、OCR 和日志路径都正常。
+9. 只有在我明确确认观察结果正常并授权实际操作后，才运行一次受限的实机验证：
+   env DISPLAY=:91 XAUTHORITY=$HOME/.local/state/battlegrounds-bot/Xauthority .venv/bin/python runner.py --run --auto-recover --max-games 1 --max-minutes 30 --config config.json
+   如果需要我手动登录、处理弹窗或验证码，立即停止，不要自动猜测。
+10. 实机验证成功后，先运行完整测试：
+    .venv/bin/python -m unittest discover -s tests -v
+    测试未通过时不要启用定时任务。
+11. 只有在我再次确认需要长期运行时，才启用每日定时：
+    .venv/bin/python install_services.py --write --enable
+    systemctl --user status bg-desktop.service bg-bot.timer
+    systemctl --user list-timers bg-bot.timer
+12. 最后报告：实际安装目录、Python 版本、配置路径（不要输出配置内容）、预检结果、测试数量、实机验证摘要、服务状态、日志目录和停止/回滚命令。
+
+安全要求：不要修改或替换游戏二进制，不要写入游戏内存，不要绕过认证或反作弊，不要开放公网 X11/VNC 端口，不要上传截图、config.json、launcher-private.log 或任何账号资料。遇到未知画面、游戏版本变化、权限问题、资源不足或命令会删除/覆盖数据时，先停止并向我提问。
+```
+
 ## systemd 定时运行
 
 确认人工登录、窗口尺寸和一次短时观察都正常后，可以生成用户级服务：
