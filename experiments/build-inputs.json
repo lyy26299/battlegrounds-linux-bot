@@ -1,0 +1,6 @@
+{
+  "loader_url": "https://builds.bepinex.dev/projects/bepinex_be/791/BepInEx-Unity.Mono-linux-x64-6.0.0-be.791%2Bb782da4.zip",
+  "loader_sha256": "9300b9694eb9cbe2b794282e247e06198a26001e729b63021ebecf0c42e82810",
+  "game_assembly_sha256": "7f81d2ab2277958dea4351c41812921a00ee263a6a7abf1a5cfb4eb0794f26e5",
+  "runtime_changes_enabled": false
+}

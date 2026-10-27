@@ -1,0 +1,9 @@
+Automatic play stopped after an error.
+
+If login or verification is required,
+complete it manually before restarting.
+
+Check the newest run log in:
+~/.local/state/battlegrounds-bot/runs/
+
+Automatic retries have stopped.

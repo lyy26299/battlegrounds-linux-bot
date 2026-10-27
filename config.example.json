@@ -1,0 +1,5 @@
+{
+  "launcher": "/home/YOUR_USER/.local/bin/hearthstone-linux-gui",
+  "game_executable": "/home/YOUR_USER/.local/share/hearthstone-linux-gui/game/Bin/Hearthstone.x86_64",
+  "state_dir": "~/.local/state/battlegrounds-bot"
+}

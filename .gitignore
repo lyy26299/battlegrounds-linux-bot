@@ -1,0 +1,45 @@
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+*.so
+.Python
+.venv/
+venv/
+env/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local configuration and runtime state
+config.json
+*.log
+launcher-private.log
+*.tmp
+STOP
+PAUSE
+runs/
+state/
+.local/
+
+# Deployment-only reports and generated binaries
+README.txt
+validation.json
+manifest.sha256
+*.dll
+experiments/README.txt
+experiments/implementation-status.txt
+experiments/战斗降绘制实施记录.txt
+experiments/降负载方案-2026-10-26.txt
+experiments/baseline-interrupted-summary.json
+experiments/shadow-first-diagnostic.json
+experiments/hsmod-frame-test/result.json
+experiments/hsmod-frame-test/说明.txt
+experiments/hsmod-frame-test/结果.txt
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/
